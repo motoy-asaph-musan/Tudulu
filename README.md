@@ -47,78 +47,103 @@ Tudulu (meaning "first" or "starting point") is designed to be the baseline tool
    cd tudulu
 
 
- 2. Create and activate virtual environment:
-    python -m venv venv
-    source venv/bin/activate  # On Windows: venv\Scripts\activate
-    
-3. Install dependencies:
-   pip install -r requirements.txt
+Create and activate virtual environment:
 
-4. Apply migrations:
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -r requirements.txt
 python manage.py migrate
+python manage.py createsuperuser
+python manage.py runserver
 
-5. Create superuser (optional):
-   python manage.py createsuperuser
-   
-7. Run the server:
-   python manage.py runserver
+---
 
-🌐 Deployment Guide (Render)
-Create a Render account
+## 🌐 Deployment Guide (Render)
 
-Connect your GitHub repository
+1. **Create a Render account**: [https://render.com](https://render.com)
 
-Add a new Web Service
+2. **Connect your GitHub repository** to Render.
 
-Set the following build & start commands:
+3. **Add a new Web Service** and fill in the details.
 
-Build command: pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate
+4. **Set the following build & start commands**:
 
-Start command: gunicorn tudulu.wsgi
+   - **Build command**:
+     ```bash
+     pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate
+     ```
 
-Set environment variables:
+   - **Start command**:
+     ```bash
+     gunicorn tudulu.wsgi
+     ```
 
-SECRET_KEY, DEBUG=False, ALLOWED_HOSTS, etc.
+5. **Set environment variables**:
+   - `SECRET_KEY`
+   - `DEBUG=False`
+   - `ALLOWED_HOSTS`, etc.
 
-Add Render’s domain to Django’s ALLOWED_HOSTS
+6. **Add Render’s domain** to Django’s `ALLOWED_HOSTS` in `settings.py`.
 
-Configure static files with WhiteNoise or AWS S3
+7. **Configure static files** using:
+   - [WhiteNoise](http://whitenoise.evans.io/en/stable/) (for simplicity), or
+   - [AWS S3](https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html) (for scalability)
 
-Link your custom domain via Render’s dashboard
+8. **Link your custom domain** via Render’s dashboard.
 
-🔐 Security Checklist
- Password reset support
+---
 
- HTTPS enabled in production
+## 🔐 Security Checklist
 
- 2FA (Planned)
+- ✅ Password reset support
+- ✅ HTTPS enabled in production
+- 🔜 Two-Factor Authentication (Planned)
+- ✅ Admin activity logging
 
- Activity logging for admins
+---
 
-🗺 Roadmap
-🔄 REST API support for mobile/IoT devices
+## 🗺 Roadmap
 
-📱 PWA frontend interface
+- 🔄 REST API support for mobile/IoT devices
+- 📱 Progressive Web App (PWA) interface
+- 🔧 Equipment usage log history
+- 📊 Analytics dashboard for hospital admins
+- 🔗 WhatsApp Bot for automatic reminders
 
-🔧 Equipment usage logs
+---
 
-📊 Analytics dashboard for hospital admins
+## 🤝 Contributing
 
-🔗 WhatsApp Bot for reminders
+We welcome contributions!
 
-🤝 Contributing
-We welcome contributions! Fork the repo, create a branch, make changes, and submit a pull request.
+1. Fork the repo  
+2. Create a new branch  
+3. Make your changes  
+4. Submit a pull request
 
-📜 License
-This project is licensed under the MIT License.
+Thank you for helping us improve Tudulu!
 
-👤 Author
-Motoy Asaph Musan
-Biomedical Engineer | Health Informatician | Django Developer
+---
+
+## 📜 License
+
+This project is licensed.
+
+---
+
+## 👤 Author
+
+**Motoy Asaph Musan**  
+Biomedical Engineer | Health Informatician | Django Developer  
 🇺🇬 Uganda
 
-📧 Contact
-For support or collaboration, email: motoyasaphmusan@gmail.com]
+---
+
+## 📧 Contact
+
+For support or collaboration, reach out via email:  
+**motoyasaphmusan@gmail.com]**
+
 
 
 

@@ -1,0 +1,70 @@
+<h2>My Installed Equipment</h2>
+
+<head>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'equipment/styles.css' %}">
+    <!-- Optional: Add fallback if static fails -->
+    <link rel="stylesheet" href="/static/equipment/styles.css" onerror="this.href='/static/equipment/styles.css'">
+</head>
+<nav>
+    <ul>
+      <li><a href="{% url 'equipment:home' %}">Home</a></li>
+      <li><a href="{% url 'equipment:add_equipment' %}">Add Equipment</a></li>
+      <li><a href="{% url 'equipment:equipment_list' %}">View Equipment</a></li>
+      <li><a href="{% url 'users:login' %}">Login</a></li>
+    </ul>
+</nav>
+<a href="{% url 'export-excel' %}">Export to Excel</a> | 
+<a href="{% url 'export-pdf' %}">Export to PDF</a>
+
+<!-- Search and Filter Form -->
+<form method="get" class="equipment-filter">
+    <input type="text" name="q" placeholder="Search by name or location" value="{{ query|default:'' }}">
+    <select name="status">
+        <option value="All" {% if status_filter == 'All' or not status_filter %}selected{% endif %}>All Statuses</option>
+        <option value="Upcoming" {% if status_filter == 'Upcoming' %}selected{% endif %}>Upcoming</option>
+        <option value="Overdue" {% if status_filter == 'Overdue' %}selected{% endif %}>Overdue</option>
+        <option value="OK" {% if status_filter == 'OK' %}selected{% endif %}>OK</option>
+    </select>
+    <button type="submit">Search</button>
+</form>
+
+<!-- Equipment List -->
+<ul class="equipment-list">
+    {% for item in page_obj|default:equipment %}
+        <li class="equipment-item {% if item.status == 'Overdue' %}status-overdue{% elif item.status == 'Upcoming' %}status-upcoming{% else %}status-ok{% endif %}">
+            <strong>{{ item.name }}</strong> – {{ item.location }}<br>
+            Next service: {{ item.next_service_date|date:"Y-m-d" }}<br>
+            Status: 
+            <span class="status-badge">
+                {{ item.status }}
+            </span>
+            {% if item.notes %}
+                <div class="notes">Notes: {{ item.notes }}</div>
+            {% endif %}
+        </li>
+    {% empty %}
+        <li class="no-results">No equipment found matching your criteria.</li>
+    {% endfor %}
+</ul>
+
+<!-- Pagination (if using page_obj) -->
+{% if page_obj %}
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1{% if query %}&q={{ query }}{% endif %}{% if status_filter != 'All' %}&status={{ status_filter }}{% endif %}">&laquo; first</a>
+                <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if status_filter != 'All' %}&status={{ status_filter }}{% endif %}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if status_filter != 'All' %}&status={{ status_filter }}{% endif %}">next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}{% if status_filter != 'All' %}&status={{ status_filter }}{% endif %}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+{% endif %}

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% load static %}
+    <title>Tudulu | News Feed</title>
+
+    <link rel="stylesheet" href="{% static 'equipment/styles.css' %}">
+    <!-- Optional fallback if static fails -->
+    <link rel="stylesheet" href="/static/equipment/styles.css" onerror="this.href='/static/equipment/styles.css'">
+</head>
+
+<body>
+    <!-- Navigation bar -->
+    <nav class="navbar">
+        <a href="/equipment/home">Home</a>
+        <a href="/equipment/list">My Equipment</a>
+        <a href="/equipment/add">Add Equipment</a>
+        <a href="/equipment/create">New Post</a>
+        {% if user.is_authenticated %}
+            <span style="float:right;">
+                Hi {{ user.username }} |
+                <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" style="background:none; border:none; padding:0; font:inherit; cursor:pointer; color:blue; text-decoration:underline;">
+                        Logout
+                    </button>
+                </form>
+            </span>
+        {% else %}
+            <span style="float:right;">
+                <a href="{% url 'login' %}">Login</a>
+            </span>
+        {% endif %}
+    </nav>
+
+    <!-- Page Title -->
+    <h2>News Feed</h2>
+
+    <!-- Post Creation + Search/Filter Form -->
+    <div class="feed-controls">
+        <a href="/equipment/create" class="btn-new-post">+ New Post</a>
+
+        <form method="get" class="feed-search">
+            <input type="text" name="q" placeholder="Search by title..." value="{{ request.GET.q }}">
+            <select name="tag">
+                <option value="">All Types</option>
+                <option value="sale" {% if request.GET.tag == 'sale' %}selected{% endif %}>For Sale</option>
+                <option value="rent" {% if request.GET.tag == 'rent' %}selected{% endif %}>For Rent</option>
+                <option value="donation" {% if request.GET.tag == 'donation' %}selected{% endif %}>Donation</option>
+            </select>
+            <button type="submit" class="btn-search">Search</button>
+
+            {% if request.GET.q or request.GET.tag %}
+                <a href="{% url 'home' %}" class="clear-filters">Clear filters</a>
+            {% endif %}
+        </form>
+    </div>
+
+    <hr>
+
+    <!-- Posts List -->
+    {% for post in posts %}
+        <div class="post-card">
+            <div class="post-header">
+                <h3>{{ post.title }}</h3>
+                <div class="post-meta">
+                    <span class="post-author">By {{ post.user.username }}</span>
+                    <span class="post-date">on {{ post.created_at|date:"M j, Y" }}</span>
+                    <span class="post-tag">{{ post.get_tag_display }}</span>
+                </div>
+            </div>
+
+            {% if post.image %}
+                <div class="post-image">
+                    <img src="{{ post.image.url }}" alt="{{ post.title }}">
+                </div>
+            {% endif %}
+
+            <div class="post-content">
+                <p>{{ post.description }}</p>
+            </div>
+
+            <!-- Interactions -->
+            <div class="post-interactions">
+                <!-- Like Form -->
+                <form method="post" action="{% url 'toggle-like' post.id %}" class="like-form">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-like {% if request.user in post.likes.all %}liked{% endif %}">
+                        ❤️ {{ post.like_set.count }} Like{{ post.like_set.count|pluralize }}
+                    </button>
+                </form>
+
+                <!-- Comment Form -->
+                <form method="post" action="{% url 'add-comment' post.id %}" class="comment-form">
+                    {% csrf_token %}
+                    <input type="text" name="comment" placeholder="Write a comment..." required>
+                    <button type="submit" class="btn-comment">Post</button>
+                </form>
+            </div>
+
+            <!-- Comments -->
+            {% if post.comment_set.all %}
+                <div class="comments-section">
+                    {% for comment in post.comment_set.all %}
+                        <div class="comment">
+                            <strong>{{ comment.user.username }}</strong>:
+                            <span class="comment-content">{{ comment.content }}</span>
+                            <small class="comment-date">{{ comment.created_at|timesince }} ago</small>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    {% empty %}
+        <div class="no-posts">
+            <p>No posts found{% if request.GET.q or request.GET.tag %} matching your criteria{% endif %}.</p>
+            {% if request.GET.q or request.GET.tag %}
+                <a href="/equipment/home">Show all posts</a>
+            {% else %}
+                <a href="/equipment/create">Be the first to post!</a>
+            {% endif %}
+        </div>
+    {% endfor %}
+
+    <!-- Pagination -->
+    {% if is_paginated %}
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+                <a href="?page=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.tag %}&tag={{ request.GET.tag }}{% endif %}">&laquo; First</a>
+                <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.tag %}&tag={{ request.GET.tag }}{% endif %}">Previous</a>
+            {% endif %}
+
+            <span class="current-page">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.tag %}&tag={{ request.GET.tag }}{% endif %}">Next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.tag %}&tag={{ request.GET.tag }}{% endif %}">Last &raquo;</a>
+            {% endif %}
+        </div>
+    {% endif %}
+</body>
+</html>

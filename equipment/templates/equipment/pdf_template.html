@@ -1,0 +1,27 @@
+<h2>Installed Equipment Report</h2>
+
+<head>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'equipment/styles.css' %}">
+    <!-- Optional: Add fallback if static fails -->
+    <link rel="stylesheet" href="/static/equipment/styles.css" onerror="this.href='/static/equipment/styles.css'">
+</head>
+
+<table border="1" cellspacing="0" cellpadding="5">
+    <tr>
+        <th>Name</th>
+        <th>Serial Number</th>
+        <th>Location</th>
+        <th>Date Installed</th>
+        <th>Next Service Date</th>
+    </tr>
+    {% for e in equipment %}
+    <tr>
+        <td>{{ e.name }}</td>
+        <td>{{ e.serial_number }}</td>
+        <td>{{ e.location }}</td>
+        <td>{{ e.date_installed }}</td>
+        <td>{{ e.next_service_date }}</td>
+    </tr>
+    {% endfor %}
+</table>

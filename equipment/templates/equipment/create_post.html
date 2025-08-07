@@ -1,0 +1,22 @@
+<h2>Create New Post</h2>
+
+<head>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'equipment/styles.css' %}">
+    <!-- Optional: Add fallback if static fails -->
+    <link rel="stylesheet" href="/static/equipment/styles.css" onerror="this.href='/static/equipment/styles.css'">
+</head>
+<nav>
+    <ul>
+      <li><a href="/equipment/home">Home</a></li>
+      <li><a href="/equipment/equipment">Add Equipment</a></li>
+      <li><a href="/equipment/list' %}">View Equipment</a></li>
+      <li><a href="/registration/login' %}">Login</a></li>
+    </ul>
+</nav>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Publish</button>
+</form>
+<a href="{% url 'post-list' %}">Back to Feed</a>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Add Equipment</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'equipment/styles.css' %}">
+    <!-- Optional: Add fallback if static fails -->
+    <link rel="stylesheet" href="/static/equipment/styles.css" onerror="this.href='/static/equipment/styles.css'">
+</head>
+<nav>
+    <ul>
+      <li><a href="{% url 'equipment:home' %}">Home</a></li>
+      <li><a href="{% url 'equipment:add_equipment' %}">Add Equipment</a></li>
+      <li><a href="{% url 'equipment:equipment_list' %}">View Equipment</a></li>
+      <li><a href="{% url 'users:login' %}">Login</a></li>
+    </ul>
+</nav>
+<body>
+    <h2>Add New Installed Equipment</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Save Equipment</button>
+    </form>
+    <a href="{% url 'equipment-list' %}">Back to List</a>
+</body>
+</html>

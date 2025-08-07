@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tudulu</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+    {% include 'partials/navbar.html' %}
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,21 @@
+{% comment %} <h2>You have been logged out.</h2>
+<link rel="stylesheet" href="{% static 'css/styles_registration.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/styles_registration.css' %}">
+<a href="{% url 'login' %}">Login again</a> {% endcomment %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Logged Out - Tudulu</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles_registration.css' %}">
+</head>
+<body>
+    <div class="form-container">
+        <h2>You have been logged out</h2>
+        <p>Thank you for using Tudulu.</p>
+        <p><a href="{% url 'login' %}">Log in again</a> or <a href="/">Go to homepage</a></p>
+    </div>
+</body>
+</html>

@@ -54,7 +54,7 @@ Tudulu (meaning "first" or "starting point") is designed to be the baseline tool
 3. Install dependencies:
    pip install -r requirements.txt
 
-4.Apply migrations:
+4. Apply migrations:
 python manage.py migrate
 
 5. Create superuser (optional):
@@ -62,6 +62,65 @@ python manage.py migrate
    
 7. Run the server:
    python manage.py runserver
+
+🌐 Deployment Guide (Render)
+Create a Render account
+
+Connect your GitHub repository
+
+Add a new Web Service
+
+Set the following build & start commands:
+
+Build command: pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate
+
+Start command: gunicorn tudulu.wsgi
+
+Set environment variables:
+
+SECRET_KEY, DEBUG=False, ALLOWED_HOSTS, etc.
+
+Add Render’s domain to Django’s ALLOWED_HOSTS
+
+Configure static files with WhiteNoise or AWS S3
+
+Link your custom domain via Render’s dashboard
+
+🔐 Security Checklist
+ Password reset support
+
+ HTTPS enabled in production
+
+ 2FA (Planned)
+
+ Activity logging for admins
+
+🗺 Roadmap
+🔄 REST API support for mobile/IoT devices
+
+📱 PWA frontend interface
+
+🔧 Equipment usage logs
+
+📊 Analytics dashboard for hospital admins
+
+🔗 WhatsApp Bot for reminders
+
+🤝 Contributing
+We welcome contributions! Fork the repo, create a branch, make changes, and submit a pull request.
+
+📜 License
+This project is licensed under the MIT License.
+
+👤 Author
+Motoy Asaph Musan
+Biomedical Engineer | Health Informatician | Django Developer
+🇺🇬 Uganda
+
+📧 Contact
+For support or collaboration, email: motoyasaphmusan@gmail.com]
+
+
 
 
 

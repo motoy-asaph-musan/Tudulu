@@ -1,34 +1,19 @@
-"""
-URL configuration for tudulu_core project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
-
 
 # # urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
-from users.views import home
+# from users.views import home
+from equipment import views as equipment_views
 
 urlpatterns = [
-    path('', auth_views.LoginView.as_view(), name='login'),
-    path('', home, name='home'),
-    # path('', equipment_views.home, name='home'),
     path('admin/', admin.site.urls),
+    path('', equipment_views.home, name='home'),
+    path('', auth_views.LoginView.as_view(), name='login'),
     path('users/', include('users.urls')),
-    path('equipment/', include('equipment.urls')),
+    # path('equipment/', include('equipment.urls')),
+    path('equipment/', include(('equipment.urls', 'equipment'), namespace='equipment')),
+    path('', include('equipment.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
 ]

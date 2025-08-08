@@ -1,22 +1,226 @@
-<h2>Create New Post</h2>
-
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'equipment/styles.css' %}">
-    <!-- Optional: Add fallback if static fails -->
-    <link rel="stylesheet" href="/static/equipment/styles.css" onerror="this.href='/static/equipment/styles.css'">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create New Post</title>
+    <style>
+        /* CSS Variables */
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50; /* Dark blue/navy */
+            --light-color: #ecf0f1;    /* Light gray/white */
+            --dark-color: #34495e;      /* Slightly darker blue */
+            --danger-color: #e74c3c;    /* Red for errors */
+        }
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            padding: 0; /* Removed the 20px padding that was causing the stretch */
+        }
+   
+
+        
+        /* Navigation Bar - Fixed Version */
+        .navbar {
+            background-color: var(--secondary-color);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .navbar > div {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .navbar a {
+            color: var(--light-color);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+            white-space: nowrap; /* Prevents text wrapping */
+        }
+        
+        .navbar a:hover {
+            background-color: var(--dark-color);
+        }
+        
+        .user-greeting {
+            color: var(--light-color);
+            margin-right: 0.5rem;
+        }
+        
+        .profile-photo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            color: var(--light-color);
+            cursor: pointer;
+            text-decoration: underline;
+            font: inherit;
+            padding: 0;
+            margin-left: 0.5rem;
+        }   
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        /* Form Styles */
+        .post-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .form-group label {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .form-group textarea {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        .form-group input[type="file"] {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        button[type="submit"] {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+        
+        button[type="submit"]:hover {
+            background-color: #2980b9;
+        }
+        
+        /* Back Link */
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #3498db;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .back-link:hover {
+            color: #2980b9;
+            text-decoration: underline;
+        }
+        
+        /* Error Messages */
+        .error-message {
+            color: #e74c3c;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+    </style>
 </head>
-<nav>
-    <ul>
-      <li><a href="/equipment/home">Home</a></li>
-      <li><a href="/equipment/equipment">Add Equipment</a></li>
-      <li><a href="/equipment/list' %}">View Equipment</a></li>
-      <li><a href="/registration/login' %}">Login</a></li>
-    </ul>
-</nav>
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Publish</button>
-</form>
-<a href="{% url 'post-list' %}">Back to Feed</a>
+<body>
+
+    <nav class="navbar">
+        <div>
+            <a href="{% url 'equipment:home' %}">Home</a>
+            <a href="{% url 'equipment:equipment_list' %}">My Equipment</a>
+            <a href="{% url 'equipment:add_equipment' %}">Add Equipment</a>
+            <a href="{% url 'equipment:create_post' %}">New Post</a>
+        </div>
+        {% if user.is_authenticated %}
+            <div>
+                <span class="user-greeting">Hi {{ user.username }}</span>
+                <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                    {% if user.profile.photo %}
+                        <img src="{{ user.profile.photo.url }}" alt="Profile Photo" class="profile-photo">
+                    {% else %}
+                        <img src="{% static 'images/default_profile.png' %}" alt="Default Profile Photo" class="profile-photo">
+                    {% endif %}
+                    {% csrf_token %}
+                    <button type="submit" class="logout-btn">
+                        Logout
+                    </button>
+                </form>
+            </div>
+        {% else %}
+            <a href="{% url 'users:login' %}">Login</a>
+        {% endif %}
+    </nav>
+
+    <div class="form-container">
+        <h2>Create New Post</h2>
+        <form method="post" enctype="multipart/form-data" class="post-form">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="id_content">Post Content:</label>
+                <textarea name="content" id="id_content" required>{{ form.content.value|default:'' }}</textarea>
+                {% if form.content.errors %}
+                    <div class="error-message">{{ form.content.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="id_image">Upload Image (optional):</label>
+                <input type="file" name="image" id="id_image" accept="image/*">
+                {% if form.image.errors %}
+                    <div class="error-message">{{ form.image.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <button type="submit">Publish</button>
+        </form>
+        
+        <a href="{% url 'home' %}" class="back-link">← Back to Feed</a>
+    </div>
+</body>
+</html>

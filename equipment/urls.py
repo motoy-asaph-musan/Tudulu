@@ -1,19 +1,62 @@
+# from django.urls import path
+# from . import views
+
+# app_name = 'equipment'
+
+# urlpatterns = [
+#     path('home/', views.home, name='equipment-home'),
+#     path('installed/', views.equipment_list, name='equipment-list'),
+#     path('installed/add/', views.add_equipment, name='add-equipment'),
+#     # path('', views.home, name='home'),
+#     path('add/', views.add_equipment, name='add-equipment'),
+#     path('list/', views.equipment_list, name='equipment-list'),
+#     path('export/excel/', views.export_excel, name='export-excel'),
+#     path('export/pdf/', views.export_pdf, name='export-pdf'),
+#     path('news/', views.post_list, name='post-list'),
+#     path('news/create/', views.create_post, name='create-post'),
+#     path('news/like/<int:post_id>/', views.toggle_like, name='toggle-like'),
+#     path('news/comment/<int:post_id>/', views.add_comment, name='add-comment'),
+# ]
+
+# from django.urls import path
+# from . import views
+
+# app_name = 'equipment'
+
+# urlpatterns = [
+#     path('', views.home, name='home'),  # Root URL loads home.html
+#     path('home/', views.home, name='equipment-home'),
+#     path('installed/', views.equipment_list, name='equipment-list'),
+#     path('installed/add/', views.add_equipment, name='add-equipment'),
+#     path('add/', views.add_equipment, name='add-equipment'),
+#     path('list/', views.equipment_list, name='equipment-list'),
+#     path('export/excel/', views.export_excel, name='export-excel'),
+#     path('export/pdf/', views.export_pdf, name='export-pdf'),
+#     path('news/', views.post_list, name='post-list'),
+#     path('news/create/', views.create_post, name='create-post'),
+#     path('news/like/<int:post_id>/', views.toggle_like, name='toggle-like'),
+#     path('news/comment/<int:post_id>/', views.add_comment, name='add-comment'),
+# ]
+
 from django.urls import path
 from . import views
 
 app_name = 'equipment'
 
+
 urlpatterns = [
-    path('home/', views.home, name='equipment-home'),
-    path('installed/', views.equipment_list, name='equipment-list'),
-    path('installed/add/', views.add_equipment, name='add-equipment'),
-    # path('', views.home, name='home'),
-    path('add/', views.add_equipment, name='add-equipment'),
-    path('list/', views.equipment_list, name='equipment-list'),
-    path('export/excel/', views.export_excel, name='export-excel'),
-    path('export/pdf/', views.export_pdf, name='export-pdf'),
-    path('news/', views.post_list, name='post-list'),
-    path('news/create/', views.create_post, name='create-post'),
-    path('news/like/<int:post_id>/', views.toggle_like, name='toggle-like'),
-    path('news/comment/<int:post_id>/', views.add_comment, name='add-comment'),
+    path('equipment/home/', views.home, name='home'),
+    # path('equipment/news/', views.post_list, name='post_list'),
+    path('', views.home, name='home'),
+    path('installed/', views.equipment_list, name='equipment_list'),
+    path('installed/add/', views.add_equipment, name='add_equipment'),
+    path('add/', views.add_equipment, name='add_equipment'),
+    path('list/', views.equipment_list, name='equipment_list'),
+    path('export/excel/', views.export_excel, name='export_excel'),
+    path('export/pdf/', views.export_pdf, name='export_pdf'),
+    path('news/', views.post_list, name='post_list'),
+    path('news/create/', views.create_post, name='create_post'),
+    path('equipment/create/', views.add_equipment, name='create_equipment'),
+    path('news/like/<int:post_id>/', views.toggle_like, name='toggle_like'),
+    path('news/comment/<int:post_id>/', views.add_comment, name='add_comment'),
 ]

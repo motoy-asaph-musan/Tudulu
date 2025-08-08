@@ -2,22 +2,21 @@ from django.contrib.auth import views as auth_views
 from django.urls import path
 from . import views
 from .views import LogoutGetAllowedView
+from django.contrib.auth.views import LogoutView
 from django.contrib.auth import views as auth_views
 from django.urls import path
 from . import views
+from .views import LogoutView, user_login, register
 
 app_name = 'users'
 
 urlpatterns = [
-    # Authentication URLs
-    path('login/', 
-         auth_views.LoginView.as_view(
-             template_name='users/login.html',  # Explicit path to your template
-             redirect_authenticated_user=True  # Optional but recommended
-         ), 
-         name='login'),
-    path('logout/', LogoutGetAllowedView.as_view(), name='logout'),
-    path('register/', views.register, name='register'),
+    path('login/', user_login, name='login'),
+    # path('logout/', LogoutView.as_view(next_page='users:login'), name='logout'),
+    path('logout/', LogoutView.as_view(), name='logout'),
+    path('logout/', views.logout_view, name='logout'),
+    # path('register/', views.register, name='register'),
+    path('register/', register, name='register'),
     
     # Password Reset URLs
     path('password-reset/', 

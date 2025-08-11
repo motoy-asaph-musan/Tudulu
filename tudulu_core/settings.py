@@ -31,8 +31,8 @@ SECRET_KEY = 'django-insecure-3q29h-oa0xw4e9$i4gy9pnedefuel#c7tqb*o*8_lkt@!8&#1g
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+# ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['tudulu.onrender.com', 'localhost', '127.0.0.1']
 
 # Application definition
 
@@ -155,4 +155,5 @@ DEFAULT_FROM_EMAIL = 'admin@tudulu.com'
 # EMAIL_PORT = 587
 # EMAIL_USE_TLS = True
 # EMAIL_HOST_USER = 'motoyasaphmusan@gmail.com'
+
 # EMAIL_HOST_PASSWORD = 'Tudulu@Uganda36!'

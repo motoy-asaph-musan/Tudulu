@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="card shadow border-0">
+                <!-- Header -->
+                <div class="card-header bg-primary text-white text-center py-3 rounded-top">
+                    <h4 class="mb-0">Edit Profile</h4>
+                </div>
+
+                <!-- Body -->
+                <div class="card-body p-4">
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <!-- Profile Picture -->
+                        <div class="mb-4 text-center">
+                            <img id="profilePreview"
+                                 src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'images/default_profile.png' %}{% endif %}"
+                                 class="rounded-circle shadow-sm mb-3"
+                                 width="140" height="140"
+                                 alt="Profile Picture">
+
+                            <label for="id_profile_picture" class="form-label fw-bold">Change Profile Picture</label>
+                            {{ form.profile_picture|add_class:"form-control form-control-lg" }}
+                        </div>
+
+                        <!-- Alternative Email -->
+                        <div class="mb-3">
+                            <label for="id_alternative_email" class="form-label fw-bold">Alternative Email</label>
+                            {{ form.alternative_email|add_class:"form-control form-control-lg" }}
+                        </div>
+
+                        <!-- Contact Number -->
+                        <div class="mb-3">
+                            <label for="id_contact_number" class="form-label fw-bold">Contact Number</label>
+                            {{ form.contact_number|add_class:"form-control form-control-lg" }}
+                        </div>
+
+                        <!-- Show Contact -->
+                        <div class="form-check mb-4">
+                            {{ form.show_contact|add_class:"form-check-input" }}
+                            <label class="form-check-label fw-semibold ms-2" for="id_show_contact">
+                                Allow others to see my contact details when they click my name
+                            </label>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'users:profile' %}" class="btn btn-outline-secondary btn-lg">
+                                <i class="bi bi-arrow-left-circle"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-success btn-lg px-4">
+                                Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Live Image Preview Script -->
+<script>
+document.getElementById('id_profile_picture').addEventListener('change', function(event) {
+    const [file] = event.target.files;
+    if (file) {
+        document.getElementById('profilePreview').src = URL.createObjectURL(file);
+    }
+});
+</script>
+
+<!-- Styles -->
+<style>
+.card {
+    border-radius: 15px;
+}
+img.rounded-circle {
+    object-fit: cover;
+    border: 3px solid #f8f9fa;
+}
+.btn-outline-secondary {
+    border-width: 2px;
+}
+</style>
+{% endblock %}

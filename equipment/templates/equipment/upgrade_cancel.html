@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Upgrade Cancelled{% endblock %}
+{% block content %}
+<div class="container mt-5 text-center">
+    <h2>❌ Payment Cancelled</h2>
+    <p>No worries, you can try again anytime.</p>
+    <a href="{% url 'upgrade' %}" class="btn btn-warning">Try Again</a>
+</div>
+{% endblock %}

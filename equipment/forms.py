@@ -5,15 +5,40 @@ from .models import Post, Comment
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
+# class InstalledEquipmentForm(forms.ModelForm):
+#     class Meta:
+#         model = InstalledEquipment
+#         fields = ['name', 'serial_number', 'location', 'date_installed', 'next_service_date', 'photo']
+#         widgets = {
+#             'date_installed': forms.DateInput(attrs={'type': 'date'}),
+#             'next_service_date': forms.DateInput(attrs={'type': 'date'}),
+#         }
+
+
+# # equipment/forms.py
+
+# from django import forms
+# from .models import InstalledEquipment
+
 class InstalledEquipmentForm(forms.ModelForm):
     class Meta:
         model = InstalledEquipment
-        fields = ['name', 'serial_number', 'location', 'date_installed', 'next_service_date', 'photo']
+        fields = [
+            'name',
+            'category',           # only if you added category
+            'serial_number',
+            'location',
+            'date_installed',
+            'last_service_date',
+            'next_service_date',
+            'photo',
+            'status'
+        ]
         widgets = {
-            'date_installed': forms.DateInput(attrs={'type': 'date'}),
-            'next_service_date': forms.DateInput(attrs={'type': 'date'}),
+            'date_installed': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'last_service_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'next_service_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
         }
-
 
 
 class PostForm(forms.ModelForm):

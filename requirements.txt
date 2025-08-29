@@ -40,6 +40,7 @@ packaging==25.0
 pillow==11.3.0
 pipreqs==0.4.13
 prompt_toolkit==3.0.51
+psycopg2==2.9.10
 psycopg2-binary==2.9.10
 pycparser==2.22
 pyHanko==0.29.1

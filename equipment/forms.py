@@ -1,0 +1,76 @@
+from django import forms
+from .models import InstalledEquipment
+from .models import Post
+from .models import Post, Comment
+from django.contrib.auth import get_user_model
+User = get_user_model()
+
+# class InstalledEquipmentForm(forms.ModelForm):
+#     class Meta:
+#         model = InstalledEquipment
+#         fields = ['name', 'serial_number', 'location', 'date_installed', 'next_service_date', 'photo']
+#         widgets = {
+#             'date_installed': forms.DateInput(attrs={'type': 'date'}),
+#             'next_service_date': forms.DateInput(attrs={'type': 'date'}),
+#         }
+
+
+# # equipment/forms.py
+
+# from django import forms
+# from .models import InstalledEquipment
+
+class EquipmentForm(forms.ModelForm):
+    class Meta:
+        model = InstalledEquipment
+        fields = [
+            'name',
+            'description',
+            'category',           # only if you added category
+            'serial_number',
+            'location',
+            'date_installed',
+            'last_service_date',
+            'next_service_date',
+            'photo',
+            'status'
+        ]
+        widgets = {
+            'date_installed': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'last_service_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'next_service_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+        }
+
+
+class PostForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ['title', 'content', 'image', 'tags']
+        widgets = {
+            'title': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': "Enter post title"
+            }),
+            'content': forms.Textarea(attrs={
+                'class': 'form-control',
+                'placeholder': "What's on your mind?",
+                'rows': 3
+            }),
+            'tags': forms.Select(attrs={
+                'class': 'form-control'
+            })
+        }
+
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['content']
+        widgets = {
+            'content': forms.Textarea(attrs={
+                'class': 'form-control',
+                'placeholder': "Write a comment here...",
+                'rows': 1
+            }),
+        } 
+

@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}{{ post.title }} - Tudulu{% endblock %}
+
+{% block content %}
+<h2>{{ post.title|default:"Untitled Post" }}</h2>
+<p>{{ post.content }}</p>
+
+{% if post.image %}
+    <img src="{{ post.image.url }}" alt="Post image" style="max-width: 100%;">
+{% endif %}
+
+<p>Posted by {{ post.author }} on {{ post.created_at|date:"F j, Y" }}</p>
+{% endblock %}

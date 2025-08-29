@@ -1,0 +1,415 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Home - Tudulu{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background: #f4f6f9;
+    }
+    .feed-container { display: flex; gap: 2rem; }
+    .feed-main { flex: 2; max-height: 80vh; overflow-y: auto; padding-right: 1rem; }
+    .feed-sidebar { flex: 1; }
+    .jumbotron {
+        background: linear-gradient(135deg, #4CAF50, #3e7cb1);
+        color: white; border-radius: 12px;
+        padding: 1rem; margin-bottom: 1rem;
+    }
+    .welcome-user { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
+    .welcome-user img {
+        height: 55px; width: 55px; border-radius: 50%; object-fit: cover;
+        border: 2px solid white;
+    }
+    .post-card {
+        background: #fff; border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        margin-bottom: 1.5rem; padding: 1.2rem;
+    }
+    .Contacts{
+        background: #fff; border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        margin-bottom: 1.5rem; padding: 1.2rem;
+    }
+    .post-image { width: 100%; max-height: 350px; object-fit: cover; border-radius: 8px; margin: 1rem 0; }
+    .post-actions button, .post-actions a { margin-right: 0.5rem; }
+    .comment-box { background: #f8f9fa; padding: 0.8rem; border-radius: 8px; margin-top: 1rem; }
+    .comment-item { border-left: 3px solid #6c757d; padding-left: 0.8rem; margin-bottom: 0.8rem; }
+    .ad-slot { background: #fdfdfd; border: 1px dashed #ccc; border-radius: 10px; padding: 10px; text-align: center; margin: 1.5rem 0; }
+    .search-filter { margin-bottom: 1.5rem; display: flex; gap: 10px; flex-wrap: wrap; }
+</style>
+
+<div class="container mt-4">
+    <!-- Welcome Section -->
+    <div class="jumbotron shadow-sm">
+        <h1 class="display-5">Welcome to Tudulu</h1>
+        <p class="lead">Your trusted platform for medical equipment management and health information sharing.</p>
+
+        {% comment %} {% if user.is_authenticated %}
+        <div class="welcome-user">
+            <img src="{% if user.profile.profile_picture %}{{ user.profile.profile_picture.url }}{% else %}{% static 'images/default_profile.png' %}{% endif %}" alt="Profile picture">
+            <p class="mb-0">
+                Hello, <strong>{{ user.username }}</strong> 👋  
+                <a href="{% url 'users:profile_edit' %}" class="btn btn-warning btn-sm ms-2">Edit Profile</a>
+            </p>
+        </div>
+        {% else %}
+            <p class="mb-0">Please <a href="{% url 'login' %}" class="text-light fw-bold">log in</a> to enjoy full features.</p>
+        {% endif %} {% endcomment %}
+    </div>
+
+    <div class="feed-container">
+        <!-- Posts Feed -->
+        <div class="feed-main">
+            <h5 class="mb-3"> Latest Posts</h5>
+
+            <!-- 🔍 Search and Filter -->
+            {% comment %} <form method="GET" action="." class="search-filter">
+                <input type="text" name="q" value="{{ request.GET.q }}" class="form-control" placeholder="Search posts...">
+                
+                <select name="category" class="form-select">
+                    <option value="">All Categories</option>
+                    {% for cat in categories %}
+                        <option value="{{ cat.id }}" {% if request.GET.category == cat.id|stringformat:"s" %}selected{% endif %}>
+                            {{ cat.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+
+                <button type="submit" class="btn btn-primary">Filter</button>
+                <a href="." class="btn btn-secondary">Reset</a>
+            </form> {% endcomment %}
+
+            <!-- 🔍 Search and Filter -->
+            <form method="GET" action="." class="search-filter d-flex gap-2">
+                <input type="text" name="q" value="{{ request.GET.q }}" class="form-control" placeholder="Search posts...">
+                
+                <select name="category" class="form-select">
+                    <option value="">All Categories</option>
+                    {% for cat in categories %}
+                        <option value="{{ cat.id }}" {% if request.GET.category == cat.id|stringformat:"s" %}selected{% endif %}>
+                            {{ cat.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+
+                <button type="submit" class="btn btn-primary">Filter</button>
+                <a href="." class="btn btn-secondary">Reset</a>
+            </form>
+
+            {% if posts %}
+                {% for post in posts %}
+                <div class="post-card">
+                    <h5>{{ post.title|default:"Untitled Post" }}</h5>
+                    <small class="text-muted">Posted by {{ post.author.username }} on {{ post.created_at|date:"F j, Y" }}</small>
+
+                    {% if post.image %}
+                        <img src="{{ post.image.url }}" alt="Post image" class="post-image">
+                    {% endif %}
+
+                    <p>{{ post.content|truncatewords:50 }}</p>
+
+                    <!-- Post Actions -->
+                    <div class="post-actions mt-2">
+                        <form action="{% url 'equipment:like_post' post.id %}" method="POST" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-primary btn-sm">
+                                👍 Like ({{ post.likes.count }})
+                            </button>
+                        </form>
+
+                        <a href="{% url 'equipment:post_detail' post.id %}" class="btn btn-primary btn-sm">💬 Comment</a>
+                        <a href="#" class="btn btn-outline-secondary btn-sm">🔗 Share</a>
+
+                        {% if user == post.author %}
+                            <a href="{% url 'equipment:edit_post' post.id %}" class="btn btn-warning btn-sm">✏️ Edit</a>
+                            <form action="{% url 'equipment:delete_post' post.id %}" method="POST" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-sm">🗑️ Delete</button>
+                            </form>
+                        {% endif %}
+                    </div>
+
+                    <!-- Comments Preview -->
+                    <div class="comment-box">
+                        <h6>Comments ({{ post.comments.count }})</h6>
+                        {% if post.comments.all %}
+                            {% for comment in post.comments.all|slice:":2" %}
+                                <div class="comment-item">
+                                    <p class="mb-0">{{ comment.body }}</p>
+                                    <small class="text-muted">by <strong>{{ comment.author.username }}</strong> on {{ comment.created_at|date:"M d, Y" }}</small>
+                                </div>
+                            {% endfor %}
+                            <a href="{% url 'equipment:post_detail' post.id %}#comments" class="btn btn-sm btn-link">View all</a>
+                        {% else %}
+                            <p class="text-muted">No comments yet.</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if forloop.counter|divisibleby:4 %}
+                <div class="ad-slot">
+                    <ins class="adsbygoogle"
+                         style="display:block"
+                         data-ad-format="fluid"
+                         data-ad-layout-key="-fg+5n+6t-e7+az"
+                         data-ad-client="ca-pub-xxxxxxxxxxxx"
+                         data-ad-slot="yyyyyyyyyy"></ins>
+                    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+                </div>
+                {% endif %}
+                {% endfor %}
+            {% else %}
+                <p class="text-muted">No posts available yet.</p>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="feed-sidebar">
+            <div class="card mb-3 shadow-sm">
+                <div class="card-body">
+                    <h5>📌 Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'equipment:equipment_list' %}">View Equipment</a></li>
+                        {% if user.is_authenticated %}
+                            <li><a href="{% url 'equipment:equipment_add' %}">Add Equipment</a></li>
+                            <li><a href="{% url 'equipment:create_post' %}">Create a Post</a></li>
+                        {% else %}
+                            <li><a href="{% url 'login' %}">Log in to manage equipment</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5>📊 Equipment Stats</h5>
+                    <p>Total Equipment: {{ total_equipment }}</p>
+                    <p>Recently Added: {{ recent_equipment|length }}</p>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5>Contact Tudulu Uganda Limited</h5>
+                    <p>+256750692621</p>
+                    <p>+256777936448</p>
+                    <p>tuduluugandalimited@gmail.com</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% comment %} {% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Home - Tudulu{% endblock %}
+
+{% block content %}
+<style>
+    /* Calm background */
+    body {
+        background: #f4f6f9; /* soft light gray-blue */
+    }
+
+    .feed-container {
+        display: flex;
+        gap: 2rem;
+    }
+    .feed-main {
+        flex: 2;
+        max-height: 80vh;
+        overflow-y: auto;
+        padding-right: 1rem;
+    }
+    .feed-sidebar {
+        flex: 1;
+    }
+    .jumbotron {
+        background: linear-gradient(135deg, #4CAF50, #3e7cb1);
+        color: white;
+        border-radius: 12px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+    .welcome-user {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+    .welcome-user img {
+        height: 55px;
+        width: 55px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid white;
+    }
+    .post-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        margin-bottom: 1.5rem;
+        padding: 1.2rem;
+    }
+    .post-image {
+        width: 100%;
+        max-height: 350px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin: 1rem 0;
+    }
+    .post-actions button, 
+    .post-actions a {
+        margin-right: 0.5rem;
+    }
+    .comment-box {
+        background: #f8f9fa;
+        padding: 0.8rem;
+        border-radius: 8px;
+        margin-top: 1rem;
+    }
+    .comment-item {
+        border-left: 3px solid #6c757d;
+        padding-left: 0.8rem;
+        margin-bottom: 0.8rem;
+    }
+    /* Ad slot styling */
+    .ad-slot {
+        background: #fdfdfd;
+        border: 1px dashed #ccc;
+        border-radius: 10px;
+        padding: 10px;
+        text-align: center;
+        margin: 1.5rem 0;
+    }
+</style>
+
+<div class="container mt-4">
+    <!-- Welcome Section -->
+    <div class="jumbotron shadow-sm">
+        <h1 class="display-5">Welcome to Tudulu</h1>
+        <p class="lead">Your trusted platform for medical equipment management and health information sharing.</p>
+
+        {% if user.is_authenticated %}
+        <div class="welcome-user">
+            <img src="{% if user.profile.profile_picture %}{{ user.profile.profile_picture.url }}{% else %}{% static 'images/default_profile.png' %}{% endif %}" alt="Profile picture">
+            <p class="mb-0">
+                Hello, <strong>{{ user.username }}</strong> 👋  
+                <a href="{% url 'users:profile_edit' %}" class="btn btn-warning btn-sm ms-2">Edit Profile</a>
+            </p>
+        </div>
+        {% else %}
+            <p class="mb-0">Please <a href="{% url 'login' %}" class="text-light fw-bold">log in</a> to enjoy full features.</p>
+        {% endif %}
+    </div>
+
+    <div class="feed-container">
+        <!-- Posts Feed -->
+        <div class="feed-main">
+            <h4 class="mb-3">📰 Latest Posts</h4>
+
+            {% if posts %}
+                {% for post in posts %}
+                <div class="post-card">
+                    <h5>{{ post.title|default:"Untitled Post" }}</h5>
+                    <small class="text-muted">Posted by {{ post.author.username }} on {{ post.created_at|date:"F j, Y" }}</small>
+
+                    {% if post.image %}
+                        <img src="{{ post.image.url }}" alt="Post image" class="post-image">
+                    {% endif %}
+
+                    <p>{{ post.content|truncatewords:50 }}</p>
+
+                    <!-- Post Actions -->
+                    <div class="post-actions mt-2">
+                        <form action="{% url 'equipment:like_post' post.id %}" method="POST" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-primary btn-sm">
+                                👍 Like ({{ post.likes.count }})
+                            </button>
+                        </form>
+
+                        <a href="{% url 'equipment:post_detail' post.id %}" class="btn btn-primary btn-sm">💬 Comment</a>
+                        <a href="#" class="btn btn-outline-secondary btn-sm">🔗 Share</a>
+
+                        {% if user == post.author %}
+                            <a href="{% url 'equipment:edit_post' post.id %}" class="btn btn-warning btn-sm">✏️ Edit</a>
+                            <form action="{% url 'equipment:delete_post' post.id %}" method="POST" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-sm">🗑️ Delete</button>
+                            </form>
+                        {% endif %}
+                    </div>
+
+                    <!-- Comments Preview -->
+                    <div class="comment-box">
+                        <h6>Comments ({{ post.comments.count }})</h6>
+                        {% if post.comments.all %}
+                            {% for comment in post.comments.all|slice:":2" %}
+                                <div class="comment-item">
+                                    <p class="mb-0">{{ comment.body }}</p>
+                                    <small class="text-muted">by <strong>{{ comment.author.username }}</strong> on {{ comment.created_at|date:"M d, Y" }}</small>
+                                </div>
+                            {% endfor %}
+                            <a href="{% url 'equipment:post_detail' post.id %}#comments" class="btn btn-sm btn-link">View all</a>
+                        {% else %}
+                            <p class="text-muted">No comments yet.</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Insert Google Ad after every 4 posts -->
+                {% if forloop.counter|divisibleby:4 %}
+                <div class="ad-slot">
+                    <!-- Google AdSense code -->
+                    <ins class="adsbygoogle"
+                         style="display:block"
+                         data-ad-format="fluid"
+                         data-ad-layout-key="-fg+5n+6t-e7+az"
+                         data-ad-client="ca-pub-xxxxxxxxxxxx"
+                         data-ad-slot="yyyyyyyyyy"></ins>
+                    <script>
+                         (adsbygoogle = window.adsbygoogle || []).push({});
+                    </script>
+                </div>
+                {% endif %}
+                {% endfor %}
+            {% else %}
+                <p class="text-muted">No posts available yet.</p>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="feed-sidebar">
+            <div class="card mb-3 shadow-sm">
+                <div class="card-body">
+                    <h5>📌 Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'equipment:equipment_list' %}">View Equipment</a></li>
+                        {% if user.is_authenticated %}
+                            <li><a href="{% url 'equipment:equipment_add' %}">Add Equipment</a></li>
+                            <li><a href="{% url 'equipment:create_post' %}">Create a Post</a></li>
+                        {% else %}
+                            <li><a href="{% url 'login' %}">Log in to manage equipment</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5>📊 Equipment Stats</h5>
+                    <p>Total Equipment: {{ total_equipment }}</p>
+                    <p>Recently Added: {{ recent_equipment|length }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} {% endcomment %}

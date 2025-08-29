@@ -1,0 +1,130 @@
+/* styles_registration.css */
+
+/* Base Layout */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f8fc;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+/* Container for Forms */
+.auth-container {
+    background: #ffffff;
+    padding: 32px 36px;
+    border-radius: 12px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 420px;
+    box-sizing: border-box;
+}
+
+/* Header Title */
+.auth-title {
+    text-align: center;
+    margin-bottom: 24px;
+    color: #1e2a38;
+    font-size: 26px;
+    font-weight: 600;
+}
+
+/* Form Box */
+.auth-box {
+    width: 100%;
+}
+
+/* Form Fields */
+.auth-form input[type="text"],
+.auth-form input[type="password"],
+.auth-form input[type="email"],
+.auth-form select,
+.auth-form textarea {
+    width: 100%;
+    padding: 12px 14px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #d1d9e6;
+    border-radius: 6px;
+    font-size: 15px;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+}
+
+.auth-form input:focus,
+.auth-form select:focus,
+.auth-form textarea:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* Buttons */
+.auth-form button,
+.auth-form input[type="submit"] {
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.auth-form button:hover,
+.auth-form input[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+/* Message Styling */
+.auth-messages {
+    margin-bottom: 18px;
+}
+
+.auth-message {
+    padding: 12px 14px;
+    border-radius: 6px;
+    font-size: 14px;
+    background-color: #eaf4fc;
+    color: #31708f;
+    margin-bottom: 12px;
+}
+
+.auth-message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.auth-message.success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+/* Footer Links */
+.auth-footer {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 14px;
+    color: #444;
+}
+
+.auth-footer a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.auth-footer a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive Tweak */
+@media (max-width: 480px) {
+    .auth-container {
+        padding: 24px 20px;
+    }
+}

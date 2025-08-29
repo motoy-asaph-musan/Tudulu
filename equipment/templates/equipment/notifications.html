@@ -1,0 +1,117 @@
+<!-- templates/equipment/notifications.html -->
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+{% load crispy_forms_tags %}
+
+{% block title %}Home - Tudulu{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background: #f4f6f9;
+    }
+    .feed-container { display: flex; gap: 2rem; }
+    .feed-main { flex: 2; max-height: 80vh; overflow-y: auto; padding-right: 1rem; }
+    .feed-sidebar { flex: 1; }
+    .jumbotron {
+        background: linear-gradient(135deg, #4CAF50, #3e7cb1);
+        color: white; border-radius: 12px;
+        padding: 1rem; margin-bottom: 1rem;
+    }
+    .welcome-user { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
+    .welcome-user img {
+        height: 55px; width: 55px; border-radius: 50%; object-fit: cover;
+        border: 2px solid white;
+    }
+    .post-card {
+        background: #fff; border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        margin-bottom: 1.5rem; padding: 1.2rem;
+    }
+    .Contacts{
+        background: #fff; border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        margin-bottom: 1.5rem; padding: 1.2rem;
+    }
+    .post-image { width: 100%; max-height: 350px; object-fit: cover; border-radius: 8px; margin: 1rem 0; }
+    .post-actions button, .post-actions a { margin-right: 0.5rem; }
+    .comment-box { background: #f8f9fa; padding: 0.8rem; border-radius: 8px; margin-top: 1rem; }
+    .comment-item { border-left: 3px solid #6c757d; padding-left: 0.8rem; margin-bottom: 0.8rem; }
+    .ad-slot { background: #fdfdfd; border: 1px dashed #ccc; border-radius: 10px; padding: 10px; text-align: center; margin: 1.5rem 0; }
+    .search-filter { margin-bottom: 1.5rem; display: flex; gap: 10px; flex-wrap: wrap; }
+</style>
+
+<div class="container mt-4">
+    <!-- Welcome Section -->
+    <div class="jumbotron shadow-sm">
+        <h1 class="display-5">Welcome to Tudulu</h1>
+        <p class="lead">Your trusted platform for medical equipment management and health information sharing.</p>
+
+        {% comment %} {% if user.is_authenticated %}
+        <div class="welcome-user">
+            <img src="{% if user.profile.profile_picture %}{{ user.profile.profile_picture.url }}{% else %}{% static 'images/default_profile.png' %}{% endif %}" alt="Profile picture">
+            <p class="mb-0">
+                Hello, <strong>{{ user.username }}</strong> 👋  
+                <a href="{% url 'users:profile_edit' %}" class="btn btn-warning btn-sm ms-2">Edit Profile</a>
+            </p>
+        </div>
+        {% else %}
+            <p class="mb-0">Please <a href="{% url 'login' %}" class="text-light fw-bold">log in</a> to enjoy full features.</p>
+        {% endif %} {% endcomment %}
+    </div>
+
+    <div class="feed-container">
+        <!-- Your Notifications -->
+        <div class="container mt-4">
+        <h3>Your Notifications</h3>
+        <ul class="list-group">
+            {% for notification in notifications %}
+            <li class="list-group-item {% if not notification.is_read %}fw-bold{% endif %}">
+                {{ notification.message }}
+                
+                <small class="text-muted float-end">{{ notification.created_at|naturaltime }}</small>
+            </li>
+            {% empty %}
+            <li class="list-group-item">No notifications yet.</li>
+            {% endfor %}
+        </ul>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="feed-sidebar">
+            <div class="card mb-3 shadow-sm">
+                <div class="card-body">
+                    <h5>📌 Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'equipment:equipment_list' %}">View Equipment</a></li>
+                        {% if user.is_authenticated %}
+                            <li><a href="{% url 'equipment:equipment_add' %}">Add Equipment</a></li>
+                            <li><a href="{% url 'equipment:create_post' %}">Create a Post</a></li>
+                        {% else %}
+                            <li><a href="{% url 'login' %}">Log in to manage equipment</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5>📊 Equipment Stats</h5>
+                    <p>Total Equipment: {{ total_equipment }}</p>
+                    <p>Recently Added: {{ recent_equipment|length }}</p>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5>Contact Tudulu Uganda Limited</h5>
+                    <p>+256750692621</p>
+                    <p>+256777936448</p>
+                    <p>tuduluugandalimited@gmail.com</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

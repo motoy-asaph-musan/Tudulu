@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block title %}Edit Post{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white text-center">
+                    <!-- Updated header for editing a post -->
+                    <h4 class="mb-0">Edit Post</h4>
+                </div>
+                <div class="card-body">
+                    {% if form.errors %}
+                        <div class="alert alert-danger">
+                            <strong>Oops!</strong> Please fix the errors below.
+                        </div>
+                    {% endif %}
+
+                    <!--
+                    The form action is omitted, which means it will post back to the same URL
+                    (e.g., /post/123/edit/), which is what the view expects.
+                    The 'enctype' is crucial for handling file uploads (like images).
+                    -->
+                    <form method="post" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+
+                        {% for field in form %}
+                            <div class="mb-3">
+                                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+
+                                {% if field.name == "image" and not user.profile.is_premium %}
+                                    <div class="alert alert-warning d-flex align-items-center justify-content-between">
+                                        Uploading images is a premium feature.
+                                        <a href="{% url 'equipment:upgrade' %}" class="btn btn-sm btn-primary">Upgrade</a>
+                                    </div>
+                                    <input type="file" class="form-control" disabled>
+                                {% else %}
+                                    <!-- 'add_class' from widget_tweaks applies Bootstrap styling -->
+                                    {{ field|add_class:"form-control" }}
+                                {% endif %}
+
+                                {% if field.help_text %}
+                                    <small class="form-text text-muted">{{ field.help_text }}</small>
+                                {% endif %}
+
+                                {% for error in field.errors %}
+                                    <div class="text-danger small mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+
+                        <!-- The button text has been changed to reflect that the post is being updated -->
+                        <button type="submit" class="btn btn-primary w-100 mt-3">Update Post</button>
+                    </form>
+                </div>
+                <div class="card-footer text-center d-flex justify-content-between align-items-center">
+                    <!-- Link back to the home page or a detail page for better navigation -->
+                    <a href="{% url 'equipment:home' %}" class="btn btn-link">Cancel and Go Back</a>
+                    <!-- A delete button can also be included here for convenience, but the view must be implemented -->
+                    <form action="{% url 'equipment:delete_post' post.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

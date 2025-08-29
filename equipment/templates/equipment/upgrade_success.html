@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Upgrade Successful{% endblock %}
+{% block content %}
+<div class="container mt-5 text-center">
+    <h2>🎉 You are now a Premium Member!</h2>
+    <p>You can now upload images to posts and equipment.</p>
+    <a href="{% url 'equipment:equipment_list' %}" class="btn btn-primary">Go to Equipment</a>
+</div>
+{% endblock %}

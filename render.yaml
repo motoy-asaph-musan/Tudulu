@@ -1,0 +1,64 @@
+services:
+  - type: web
+    name: tudulu-web
+    env: python
+    buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate"
+    startCommand: "gunicorn Tudulu.wsgi:application"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: tudulu-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: tudulu-redis
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: "tudulu.onrender.com"
+
+  - type: worker
+    name: tudulu-worker
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "celery -A Tudulu worker --loglevel=info"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: tudulu-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: tudulu-redis
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+
+  - type: worker
+    name: tudulu-beat
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "celery -A Tudulu beat --loglevel=info"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: tudulu-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: tudulu-redis
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+
+databases:
+  - name: tudulu-db
+    plan: free
+
+services:
+  - type: redis
+    name: tudulu-redis
+    plan: free
